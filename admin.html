@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel - Bus Pass</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <style>
+    /* ---------- Section Layout ---------- */
+.section {
+  width: 100%;
+  max-width: 420px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(255,255,255,0.97));
+  border-radius: 12px;
+  padding: 28px;
+  box-shadow: 0 8px 30px rgba(23, 35, 62, 0.08);
+  border: 1px solid rgba(15,23,42,0.05);
+  backdrop-filter: blur(6px);
+  margin: 24px auto;
+}
+
+/* ---------- Title ---------- */
+.section-title {
+  margin: 0 0 18px 0;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  color: #0b1220;
+}
+
+/* ---------- Login Form ---------- */
+#loginForm {
+  display: grid;
+  gap: 14px;
+}
+
+/* Inputs */
+#loginForm input[type="text"],
+#loginForm input[type="password"] {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(15,23,42,0.08);
+  background: linear-gradient(180deg, #fff, #fbfdff);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
+  font-size: 14px;
+  outline: none;
+  transition: border-color 200ms ease, box-shadow 200ms ease, transform 200ms ease;
+  color: #0b1220;
+  box-sizing: border-box;
+}
+
+#loginForm input::placeholder {
+  color: #94a3b8;
+  font-size: 13px;
+}
+
+#loginForm input:focus {
+  border-color: #7c5cff;
+  box-shadow: 0 6px 20px rgba(124,92,255,0.12);
+  transform: translateY(-1px);
+}
+
+/* Button */
+.btn {
+  background: linear-gradient(90deg, #2b6ef6, #7c5cff);
+  color: #fff;
+  border: none;
+  padding: 12px 20px;
+  font-weight: 600;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 15px;
+  box-shadow: 0 8px 22px rgba(44,110,246,0.16);
+  transition: transform 200ms ease, box-shadow 200ms ease, opacity 200ms ease;
+}
+
+.btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 36px rgba(44,110,246,0.18);
+}
+
+.btn:active {
+  transform: translateY(-1px) scale(0.998);
+}
+
+/* ---------- Demo Note ---------- */
+#loginSection p {
+  margin-top: 12px;
+  font-size: 12px;
+  color: #6b7280;
+  text-align: center;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 480px) {
+  .section {
+    padding: 20px;
+  }
+  .section-title {
+    font-size: 18px;
+  }
+}
+
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+      <nav class="navbar">
+    <div class="container nav-inner">
+    <div class="brand">⚙️ Admin Panel</div>
+
+    <button class="nav-toggle" aria-label="Menu">
+        <span class="hamburger"></span>
+      </button>
+
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="apply.html">Apply</a></li>
+      <li><a href="status.html">Check Status</a></li>
+      <li><a href="pass.html">Bus Pass</a></li>
+      <li><a href="admin.html" class="active">Admin</a></li>
+    </ul>
+    </div>
+  </nav>
+
+  <!-- Login Section -->
+  <section class="section" id="loginSection">
+    <h2 class="section-title">🔑 Admin Login</h2>
+    <form id="loginForm">
+      <input type="text" id="username" placeholder="Username" required>
+      <input type="password" id="password" placeholder="Password" required>
+      <button type="submit" class="btn">Login</button>
+    </form>
+    <p style="font-size:12px; color:gray;">(Demo: Username = admin, Password = 1234)</p>
+  </section>
+
+  <!-- Applications Section -->
+  <section class="section" id="adminSection" style="display:none;">
+    <h2 class="section-title">📋 Student Applications</h2>
+    <div id="applicationsList"></div>
+  </section>
+
+  <script src="assets/js/admin.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+  const loginForm = document.getElementById("loginForm");
+  const loginSection = document.getElementById("loginSection");
+  const adminSection = document.getElementById("adminSection");
+  const applicationsList = document.getElementById("applicationsList");
+
+  // Demo credentials
+  const ADMIN_USER = "admin";
+  const ADMIN_PASS = "1234";
+
+  // Handle login
+  loginForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    const user = document.getElementById("username").value;
+    const pass = document.getElementById("password").value;
+
+    if (user === ADMIN_USER && pass === ADMIN_PASS) {
+      alert("✅ Login Successful!");
+      loginSection.style.display = "none";
+      adminSection.style.display = "block";
+      loadApplications();
+    } else {
+      alert("❌ Invalid Credentials!");
+    }
+  });
+
+  // Load all applications from localStorage
+  function loadApplications() {
+    applicationsList.innerHTML = "";
+
+    if (localStorage.length === 0) {
+      applicationsList.innerHTML = "<p>No applications found.</p>";
+      return;
+    }
+
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key.startsWith("APP")) {
+        const appData = JSON.parse(localStorage.getItem(key));
+
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+          <h3>${key}</h3>
+          <p><strong>Name:</strong> ${appData.name}</p>
+          <p><strong>College:</strong> ${appData.college}</p>
+          <p><strong>Route:</strong> ${appData.route}</p>
+          <p><strong>Status:</strong> <span style="color:blue">${appData.status}</span></p>
+          <button class="btn approveBtn" data-id="${key}">Approve ✅</button>
+          <button class="btn rejectBtn" data-id="${key}" style="background:red;">Reject ❌</button>
+        `;
+        applicationsList.appendChild(card);
+      }
+    }
+
+    // Add event listeners to buttons
+    document.querySelectorAll(".approveBtn").forEach(btn => {
+      btn.addEventListener("click", function () {
+        updateStatus(this.dataset.id, "Approved");
+      });
+    });
+
+    document.querySelectorAll(".rejectBtn").forEach(btn => {
+      btn.addEventListener("click", function () {
+        updateStatus(this.dataset.id, "Rejected");
+      });
+    });
+  }
+
+  // Update application status
+  function updateStatus(appNo, newStatus) {
+    const appData = JSON.parse(localStorage.getItem(appNo));
+    appData.status = newStatus;
+    localStorage.setItem(appNo, JSON.stringify(appData));
+    alert(`Application ${appNo} updated to ${newStatus}`);
+    loadApplications();
+  }
+});
+
+  </script>
+</body>
+</html>

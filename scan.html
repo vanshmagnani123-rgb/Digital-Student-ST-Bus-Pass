@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scan Bus Pass</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+
+  <!-- QR Scanner Library -->
+  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+</head>
+<body>
+
+
+  <nav class="navbar">
+    <div class="container nav-inner">
+      <a class="brand" href="index.html">TeamQride</a>
+
+      <button class="nav-toggle" aria-label="Menu">
+        <span class="hamburger"></span>
+      </button>
+
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="apply.html">Apply</a></li>
+        <li><a href="status.html">Check Status</a></li>
+        <li><a href="pass.html">Download Pass</a></li>
+        <li><a href="scan.html" class="active">Scan</a></li>
+        <li><a href="admin.html">Admin</a></li>
+      </ul>
+    </div>
+  </nav>
+      
+  <section class="section">
+    <h2 class="section-title">📷 Scan Bus Pass</h2>
+    <div id="reader" style="width: 300px; margin: auto;"></div>
+
+    <div id="result" style="margin-top:20px; text-align:center;"></div>
+  </section>
+
+  <script>
+    function onScanSuccess(decodedText) {
+      let appData = localStorage.getItem(decodedText);
+
+      if (appData) {
+        let data = JSON.parse(appData);
+        document.getElementById("result").innerHTML = `
+          <h3 style="color:green;">✅ Pass Valid</h3>
+          <p><b>Name:</b> ${data.name}</p>
+          <p><b>Roll:</b> ${data.roll}</p>
+          <p><b>College:</b> ${data.college}</p>
+          <p><b>Route:</b> ${data.route}</p>
+          <img src="${data.photo}" width="120" style="border-radius:10px; margin-top:10px;">
+        `;
+      } else {
+        document.getElementById("result").innerHTML = `<h3 style="color:red;">❌ Invalid Pass</h3>`;
+      }
+    }
+
+    function onScanFailure(error) {
+      // Failures ko ignore kar do (normal hai)
+    }
+
+    let html5QrcodeScanner = new Html5QrcodeScanner(
+      "reader", { fps: 10, qrbox: 250 }
+    );
+    html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+  </script>
+</body>
+</html>

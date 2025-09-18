@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Check Application Status</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+
+  <style>
+    /* ---------- Section Layout ---------- */
+.section {
+  width: 100%;
+  max-width: 520px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(255,255,255,0.97));
+  border-radius: 12px;
+  padding: 26px;
+  box-shadow: 0 8px 30px rgba(23, 35, 62, 0.08);
+  border: 1px solid rgba(15,23,42,0.05);
+  backdrop-filter: blur(6px);
+  margin: 24px auto;
+}
+
+/* ---------- Title ---------- */
+.section-title {
+  margin: 0 0 14px 0;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  color: #0b1220;
+}
+
+/* ---------- Form ---------- */
+#statusForm {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Input */
+#statusForm input[type="text"] {
+  flex: 1;
+  min-width: 200px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(15,23,42,0.08);
+  background: linear-gradient(180deg, #fff, #fbfdff);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
+  font-size: 14px;
+  outline: none;
+  transition: border-color 200ms ease, box-shadow 200ms ease, transform 200ms ease;
+  color: #0b1220;
+  box-sizing: border-box;
+}
+
+#statusForm input::placeholder {
+  color: #94a3b8;
+  font-size: 13px;
+}
+
+#statusForm input:focus {
+  border-color: #2b6ef6;
+  box-shadow: 0 6px 20px rgba(43,110,246,0.12);
+  transform: translateY(-1px);
+}
+
+/* Button (reuse same style) */
+.btn {
+  background: linear-gradient(90deg, #2b6ef6, #7c5cff);
+  color: #fff;
+  border: none;
+  padding: 12px 20px;
+  font-weight: 600;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 15px;
+  box-shadow: 0 8px 22px rgba(44,110,246,0.16);
+  transition: transform 200ms ease, box-shadow 200ms ease, opacity 200ms ease;
+}
+
+.btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 36px rgba(44,110,246,0.18);
+}
+
+.btn:active {
+  transform: translateY(-1px) scale(0.998);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 560px) {
+  #statusForm {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .btn {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container nav-inner">
+      <a class="brand" href="index.html">TeamQride</a>
+
+      <button class="nav-toggle" aria-label="Menu">
+        <span class="hamburger"></span>
+      </button>
+
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="apply.html">Apply</a></li>
+        <li><a href="status.html" class="active">Check Status</a></li>
+        <li><a href="pass.html">Download Pass</a></li>
+      </ul>
+    </div>
+  </nav>
+
+
+  <!-- Status Section -->
+  <section class="section">
+    <h2 class="section-title">🔎 Check Application Status</h2>
+    <form id="statusForm">
+      <input type="text" id="appNo" placeholder="Enter Application Number" required>
+      <button type="submit" class="btn">Check</button>
+    </form>
+
+    <div id="statusResult" style="margin-top:20px;"></div>
+  </section>
+
+  <script src="assets/js/status.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+  const form = document.getElementById("statusForm");
+  const resultDiv = document.getElementById("statusResult");
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const appNo = document.getElementById("appNo").value.trim();
+    const data = localStorage.getItem(appNo);
+
+    resultDiv.innerHTML = "";
+
+    if (data) {
+      const appData = JSON.parse(data);
+      resultDiv.innerHTML = `
+        <div class="card">
+          <h3>Status for ${appNo}</h3>
+          <p><strong>Name:</strong> ${appData.name}</p>
+          <p><strong>College:</strong> ${appData.college}</p>
+          <p><strong>Route:</strong> ${appData.route}</p>
+          <p><strong>Status:</strong> <span style="color:blue">${appData.status}</span></p>
+        </div>
+      `;
+    } else {
+      resultDiv.innerHTML = `<p style="color:red;">❌ Application Number not found!</p>`;
+    }
+  });
+});
+
+  </script>
+</body>
+</html>
